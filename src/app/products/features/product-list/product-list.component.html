@@ -1,0 +1,53 @@
+<h1 class="text-center">Liste des produits</h1>
+
+<p-button label="Créer produit" (onClick)="onCreate()" class="block text-center"/>
+
+<input
+  [(ngModel)]="searchText"
+  (input)="applyFilter()"
+  placeholder="Rechercher un produit...">
+
+<p-dataView #dv [value]="products()">
+    <ng-template pTemplate="list" let-products>
+      @for (product of filteredProducts | paginate: {
+        id: paginationId,
+        itemsPerPage: itemsPerPage,
+        currentPage: currentPage
+      } ; track product.id) {
+            <p-card class="block mb-2">
+                <span class="font-medium text-secondary text-sm">{{ product.category }}</span>
+                <div class="text-lg font-medium text-900 mt-2">{{ product.name }}</div>
+                <div class="text-lg font-medium text-900 mt-2">{{ product.description }}</div>
+                  <div class="text-lg font-medium text-900 mt-2">Prix : {{ product.price | currency }}</div>
+
+                <ng-template pTemplate="footer">
+                    <div class="flex gap-3 mt-1">
+                        <p-button label="Modifier" severity="secondary" (onClick)="onUpdate(product)"/>
+                        <p-button label="Supprimer" severity="danger" (onClick)="onDelete(product)" />
+                        <p-button label="Ajouter" severity="primary" (onClick)="addToCart(product)" />
+                    </div>
+                </ng-template>
+            </p-card>
+        }
+      @if (filteredProducts.length > itemsPerPage) {
+        <pagination-controls
+          [id]="paginationId"
+          (pageChange)="currentPage = $event"
+          previousLabel="Précédent"
+          nextLabel="Suivant"
+          class="my-pagination">
+        </pagination-controls>
+      }
+
+    </ng-template>
+</p-dataView>
+
+<p-dialog [(visible)]="isDialogVisible"
+    [style]="{ width: '50vw' }"
+    header="Ajout/Edition produit">
+    <app-product-form
+        [product]="editedProduct()"
+        (save)="onSave($event)"
+        (cancel)="onCancel()"
+    />
+</p-dialog>

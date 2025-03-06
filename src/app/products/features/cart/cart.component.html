@@ -1,0 +1,15 @@
+<div class="cart-items">
+  @for (item of cartItems$ | async; track item.id) {
+    <div class="cart-item">
+      <div class="item-details">
+        <h4>{{ item.name }}</h4>
+        <p>{{ item.price | currency:'EUR' }} x {{ item.quantity }}</p>
+      </div>
+      <p-button label="Supprimer" severity="danger" (onClick)="removeItem(item.id)" />
+    </div>
+  } @empty {
+    <div>
+      Votre panier est vide
+    </div>
+  }
+</div>
